@@ -1,15 +1,4 @@
-import os
 from tkinter import *
-from tkinter import ttk
-from tkinter import filedialog
-from tkinter import messagebox
-from tkinter import scrolledtext
-
-from log_redirect import StdoutRedirector
-
-import constant
-from service import main_process
-
 
 main_win = Tk()
 
