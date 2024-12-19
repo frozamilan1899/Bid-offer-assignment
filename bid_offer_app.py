@@ -66,7 +66,7 @@ def init_client_window():
     main_win.configure(background='#eeeeee')
     
     # 输入信息
-    total_bid_input_lb = ttk.Label(main_win, text="请输入总报价（万元）", anchor='e', font=('楷体', 14))
+    total_bid_input_lb = ttk.Label(main_win, text="请输入总报价(万元)", anchor='e', font=('楷体', 14))
     total_bid_input_lb.place(x=10, y=40, anchor='nw')
     total_bid_entry = ttk.Entry(main_win, width=20, textvariable=total_bid_input_value)
     total_bid_entry.place(x=200, y=40, anchor='nw')
