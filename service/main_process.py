@@ -1,4 +1,9 @@
-import os
+from service import total_process
+
+
+def main_fuc(my_bid, k):
+    total_process.main_fuc(my_bid, k)
+    return 0
 
 
 if __name__ == '__main__':
