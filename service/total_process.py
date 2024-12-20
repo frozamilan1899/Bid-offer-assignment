@@ -5,6 +5,7 @@ from utils import formula
 
 bid_range=(9000, 10000)
 partner_bid_spread=300
+all_bids_range = list(range(bid_range[0], bid_range[1], 1))
 
 def generate_partner_bids(my_bid, k, num_partners=10):
     """
@@ -58,7 +59,7 @@ def simulate_bidding(my_bid, k):
     total_count = 0
     
     # 模拟坏人报价对得分的影响
-    for bad_bid in range(bid_range[0], bid_range[1], 1):
+    for bad_bid in all_bids_range:
         # 坏人报价在报价列表范围以外的话，得分肯定低，可以不用你考虑
         if bad_bid < min(partner_bids + [my_bid]) or bad_bid > max(partner_bids + [my_bid]):
             continue
@@ -75,7 +76,7 @@ def simulate_bidding(my_bid, k):
         
         # 检查我的得分是否始终第一
         my_score = scores[all_bids.index(my_bid)]
-        bad_score = scores[all_bids.index(bad_bid)]
+        # bad_score = scores[all_bids.index(bad_bid)]
         
         # 如果我的分数就是最大分数，那么算一次成功
         if my_score == max(scores):
@@ -96,7 +97,7 @@ def main_func(my_bid, k):
     final_bids_scores = []
     
     # 模拟报价并输出结果
-    try_limit = 10000
+    try_limit = 2000
     try_times = 1
     while True:
         # 超过尝试上限就不算了
@@ -108,6 +109,7 @@ def main_func(my_bid, k):
         
         # 如果我的报价比所有的伙伴报价都小，重算
         if my_bid < min(partner_bids):
+            try_times += 1
             continue
         
         # 输出最终报价方案
@@ -143,3 +145,4 @@ if __name__ == '__main__':
     # 随机 k 值
     k = random.choice(K_Range)
     main_func(my_bid, k)
+    
