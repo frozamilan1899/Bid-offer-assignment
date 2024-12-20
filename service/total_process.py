@@ -16,6 +16,7 @@ def generate_partner_bids(my_bid, k, num_partners=10):
     """
     partner_bids = []
     while True:
+        partner_bids.clear()    # 清空之前的报价，避免重复
         for _ in range(num_partners):
             # 生成一个以 10 为单位的随机数
             random_digit = random.randint(-partner_bid_spread // 10 + 1, partner_bid_spread // 10 - 1)
@@ -29,11 +30,10 @@ def generate_partner_bids(my_bid, k, num_partners=10):
             partner_bids.append(random_bid)
         # end for
         
-        # 验证我的报价是否接近(接近率可以设置)各报价计算的基准价，但不大于
+        # 验证我的报价是否接近各报价计算的基准价，但不大于
         tmp_base_price = formula.calculate_base_price(partner_bids + [my_bid], k)
         # print(f'tmp_base_price = {tmp_base_price}')
         if tmp_base_price < my_bid * (k/100.0):
-            partner_bids.clear()
             continue # 重新算
         else:
             break
@@ -50,12 +50,10 @@ def simulate_bidding(my_bid, k):
     """
     # 好伙伴的报价列表
     partner_bids = generate_partner_bids(my_bid, k)
-    
     print("My Bid:", my_bid)
     print(f"Partner Bids: {partner_bids}")
     
     base_price = 0
-    success = False
     success_count = 0
     total_count = 0
     
@@ -81,7 +79,6 @@ def simulate_bidding(my_bid, k):
         
         # 如果我的分数就是最大分数，那么算一次成功
         if my_score == max(scores):
-            success = True
             success_count += 1
             # print(f"Succeed: My bid={my_bid}, score={my_score}")
             # print(f"Succeed: Bad guy bid={bad_bid}, score={bad_score}")
@@ -92,18 +89,31 @@ def simulate_bidding(my_bid, k):
     success_rate = (success_count / total_count) * 100
     print(f"Success rate={success_rate:.2f}%")
 
-    return partner_bids, base_price, success, success_rate
+    return partner_bids, base_price, success_rate
 
 
-def main_fuc(my_bid, k):
+def main_func(my_bid, k):
+    final_bids_scores = []
+    
     # 模拟报价并输出结果
+    try_limit = 10000
     try_times = 1
     while True:
+        # 超过尝试上限就不算了
+        if try_times > try_limit:
+            break
+        
         print(f'-->My Bid:{my_bid}, K:{k}, try times={try_times}')
-        partner_bids, base_price, success, success_rate = simulate_bidding(my_bid, k)
+        partner_bids, base_price, success_rate = simulate_bidding(my_bid, k)
+        
+        # 如果我的报价比所有的伙伴报价都小，重算
+        if my_bid < min(partner_bids):
+            continue
+        
         # 输出最终报价方案
-        if success and success_rate > 99.99:
+        if success_rate > 99.99:
             print("Bingo!===================================")
+            print(f"Base price={base_price}")
             # 计算包括我在内的所有报价得分
             bids = partner_bids + [my_bid]
             scores = [formula.calculate_bid_score(bid, base_price, BidFullMarks.TOTAL.value) for bid in bids]
@@ -114,12 +124,14 @@ def main_fuc(my_bid, k):
                 bid_label = f"SelfBid {i + 1}" if bid == my_bid else f"Partner {i + 1}"
                 print(f"{bid_label}: Bid = {bid}, Score = {score:.2f}")
             # 跳出
+            final_bids_scores = sorted_bids_scores
             break
         else:
             print("Simulation failed to guarantee the highest score for my bid.")
             try_times += 1
+            
     # end while
-    return sorted_bids_scores
+    return final_bids_scores
 
 
 
@@ -130,4 +142,4 @@ if __name__ == '__main__':
     my_bid = 9600
     # 随机 k 值
     k = random.choice(K_Range)
-    main_fuc(my_bid, k)
+    main_func(my_bid, k)
