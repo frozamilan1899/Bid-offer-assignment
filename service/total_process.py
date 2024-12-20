@@ -1,11 +1,11 @@
+import numpy as np
 import random
-from service.constant import BidFullMarks, K_Range
-from utils import formula
+from service.constant import BidFullMarks, K_Range, MAX_TOTAL_BID, MAX_TOTAL_BID_limit_range
+from service import formula
 
-
-bid_range=(9000, 10000)
+bid_range=(MAX_TOTAL_BID*MAX_TOTAL_BID_limit_range[0], MAX_TOTAL_BID*MAX_TOTAL_BID_limit_range[1])
 partner_bid_spread=300
-all_bids_range = list(range(bid_range[0], bid_range[1], 1))
+all_bids_range = np.arange(bid_range[0], bid_range[1], 1)
 
 def generate_partner_bids(my_bid, k, num_partners=10):
     """
@@ -72,7 +72,7 @@ def simulate_bidding(my_bid, k):
         base_price = formula.calculate_base_price(all_bids, k)
         
         # 计算所有玩家的得分
-        scores = [formula.calculate_bid_score(bid, base_price, BidFullMarks.TOTAL.value) for bid in all_bids]
+        scores = [formula.calculate_total_bid_score(bid, base_price, BidFullMarks.TOTAL.value) for bid in all_bids]
         
         # 检查我的得分是否始终第一
         my_score = scores[all_bids.index(my_bid)]
@@ -118,7 +118,7 @@ def main_func(my_bid, k):
             print(f"Base price={base_price}")
             # 计算包括我在内的所有报价得分
             bids = partner_bids + [my_bid]
-            scores = [formula.calculate_bid_score(bid, base_price, BidFullMarks.TOTAL.value) for bid in bids]
+            scores = [formula.calculate_total_bid_score(bid, base_price, BidFullMarks.TOTAL.value) for bid in bids]
             # 将bids和scores组合，并按照scores从高到低排序
             sorted_bids_scores = sorted(zip(bids, scores), key=lambda x: x[1], reverse=True)
             # 排序和打印最终报价和得分
