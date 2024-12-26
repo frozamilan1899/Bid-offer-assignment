@@ -41,10 +41,9 @@ def calculate_deviation_rate(bid, base_price):
 
 def calculate_base_price(all_bids, k_or_r):
     """
-        计算所有报价的基准价
+    计算所有报价的基准价
     """
-    # 去掉最高和最低报价
-    sorted_bids = sorted(all_bids)
+    sorted_bids = sorted(all_bids)  # 去掉最高和最低报价
     trimmed_bids = sorted_bids[1:-1]
     # 计算基准价
     avg = sum(trimmed_bids) / len(trimmed_bids)

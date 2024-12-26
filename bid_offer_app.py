@@ -17,6 +17,8 @@ total_bid_input_value = IntVar(value=0)
 K_select_value = IntVar(value=0)
 
 def process():
+    clear_log()
+    
     # 获取实时参数值
     total_bid_value = total_bid_input_value.get()
     K_value = K_select_value.get()
